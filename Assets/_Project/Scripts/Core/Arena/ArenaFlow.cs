@@ -66,7 +66,7 @@ namespace _Project.Scripts.Core.Arena
             cardChoice.Open(OnCardChosen);
         }
 
-        private void OnCardChosen()
+        private void OnCardChosen(CardData card)
         {
             // Здесь позже будут применяться эффекты карточки.
             // Сейчас просто считаем, что волна началась.

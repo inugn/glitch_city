@@ -1,4 +1,5 @@
-﻿using _Project.Scripts.Core.Input;
+﻿using _Project.Scripts.Core.Audio;
+using _Project.Scripts.Core.Input;
 using UnityEngine;
 
 namespace _Project.Scripts.Core
@@ -24,7 +25,7 @@ namespace _Project.Scripts.Core
 
             Instance = this;
             DontDestroyOnLoad(gameObject);
-
+            
             Compose();
         }
 
@@ -45,6 +46,8 @@ namespace _Project.Scripts.Core
             var bus = new EventBus();
             Services.Register(bus);
 
+            Services.Register(new AudioSettingsService());
+            
             var pause = new PauseService(bus);
             Services.Register(pause);
 

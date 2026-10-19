@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Arena
@@ -6,13 +7,16 @@ namespace _Project.Scripts.Core.Arena
     public sealed class CardChoiceStub : MonoBehaviour
     {
         [Header("UI")]
-        [SerializeField] private GameObject panelRoot; // сюда надо назначить объект Panel "CardChoicePanel"
+        [SerializeField] private GameObject panelRoot;
+        [SerializeField] private CardChoiceController controller;
 
         [Header("Pause (stub)")]
         [SerializeField] private bool pauseWithTimeScale = true;
 
         private Action onChosen;
         private bool isOpen;
+        
+        private List<CardData> _currentCards;
 
         private void Awake()
         {
@@ -39,10 +43,11 @@ namespace _Project.Scripts.Core.Arena
             onChosen = null;
         }
 
-        public void Open(Action onCardChosen)
+        public void Open(Action<CardData> onCardChosen)
         {
-            onChosen = onCardChosen;
             isOpen = true;
+
+            _currentCards = CardGenerator.Generate(3);
 
             if (panelRoot == null)
             {
@@ -54,20 +59,51 @@ namespace _Project.Scripts.Core.Arena
 
             if (pauseWithTimeScale)
                 Time.timeScale = 0f;
+            
+            controller.Open(card =>
+            {
+                if (pauseWithTimeScale)
+                    Time.timeScale = 1f;
+
+                panelRoot.SetActive(false);
+
+                onCardChosen?.Invoke(card);
+            });
         }
 
         // Вызывается кнопками UI
-        public void ChooseAnyCard()
+        public void ChooseCard(int index)
         {
-            if (!isOpen) return; // защита от повторных кликов/вызовов
+            if (!isOpen) return;
+            if (index < 0 || index >= _currentCards.Count) return;
 
+            var chosen = _currentCards[index];
+
+            ApplyCard(chosen);
+
+            Close();
+        }
+
+        private void ApplyCard(CardData card)
+        {
+            // TODO применение к игроку и волне
+            Debug.Log($"Редкость: {card.Title}");
+
+            Debug.Log("Эффект игрока:");
+            Debug.Log(card.PositiveEffect.GetDescription());
+
+            Debug.Log("Эффект волны:");
+            Debug.Log(card.NegativeEffect.GetDescription());
+        }
+
+        private void Close()
+        {
             isOpen = false;
 
             if (pauseWithTimeScale)
                 Time.timeScale = 1f;
 
-            if (panelRoot != null)
-                panelRoot.SetActive(false);
+            panelRoot.SetActive(false);
 
             var cb = onChosen;
             onChosen = null;

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace _Project.Scripts.Core
@@ -27,8 +28,7 @@ namespace _Project.Scripts.Core
 
         public void OpenSettings()
         {
-            var services = App.Instance.Services;
-            services.Get<SceneLoader>().Load(SceneNames.Settings);
+            App.Instance.Services.Get<SceneLoader>().Load(SceneNames.Settings);
         }
         
         public void QuitGame()

@@ -8,6 +8,6 @@ namespace _Project.Scripts.Core
         public const string Shelter = "Shelter";
         public const string BossArena = "BossArena";
         public const string Settings = "Settings";
+        public const string Menu = "Menu";
     }
-    
 }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using _Project.UI;
+using UnityEngine;
 
 namespace _Project.Scripts.Player
 {
@@ -12,7 +13,8 @@ namespace _Project.Scripts.Player
             if (playerPrefab == null || spawnPoint == null) return;
 
             // Если игрок уже есть (например, DontDestroy), можно усложнить позже.
-            Instantiate(playerPrefab, spawnPoint.position, Quaternion.identity);
+            Player player = Instantiate(playerPrefab, spawnPoint.position, Quaternion.identity).GetComponent<Player>();
+            UIManager.Instance.RegisterPlayer(player);
         }
     }
 }

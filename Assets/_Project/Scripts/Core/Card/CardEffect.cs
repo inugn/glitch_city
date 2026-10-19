@@ -7,6 +7,7 @@ namespace _Project.Scripts.Core.Arena
     {
         public EffectType Type;
         public float Value;
+        public bool IsPositive;
 
         public string GetDescription()
         {
