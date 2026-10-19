@@ -6,8 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/_Project/Scenes/SampleScene.unity
-    guid: 8c9cfa26abfee488c85f1582747f6a02
+    path: Assets/_Project/Scenes/StartZone.unity
+    guid: 6e627a25b1137f8488d47623db7fa303
+  - enabled: 1
+    path: Assets/_Project/Scenes/BossArena.unity
+    guid: ec3ea5f6cab38eb4ba5225b146c6832f
+  - enabled: 1
+    path: Assets/_Project/Scenes/Arena.unity
+    guid: e0d443e6e203d1146aea513f1a576193
+  - enabled: 1
+    path: Assets/_Project/Scenes/Shelter.unity
+    guid: d2925e9d9516abd479110a65e9638dc5
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
