@@ -10,6 +10,9 @@ namespace _Project.Scripts.Core.Actor
 
         protected virtual void Awake()
         {
+            if (stats == null)
+                stats = new Stats();
+
             stats.Initialize();
         }
     }

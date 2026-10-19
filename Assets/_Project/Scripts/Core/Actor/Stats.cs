@@ -18,6 +18,9 @@ namespace _Project.Scripts.Core.Actor
 
         public void Initialize()
         {
+            if (health == null)
+                health = new Health();
+
             health.Initialize();
         }
 
