@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using _Project.Scripts.Core.Arena;
 
-namespace _Project.Scripts.Core.Cards
+namespace _Project.Scripts.Core.Card
 {
     public static class CardEffectCombinations
     {

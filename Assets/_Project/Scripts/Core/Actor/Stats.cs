@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Actor
@@ -12,6 +13,8 @@ namespace _Project.Scripts.Core.Actor
         [SerializeField] private float reloadSpeedMultiplier = 1f;
         [SerializeField] private float damageMultiplier = 1f;
         [SerializeField] private float moveSpeedMultiplier = 1f;
+        
+        public event Action OnStatsChanged;
 
         public Health Health => health;
 
@@ -23,8 +26,10 @@ namespace _Project.Scripts.Core.Actor
         public void Initialize()
         {
             if (health == null)
-                health = new Health();
-
+            {
+                Debug.LogError("[Stats] Health is null!");
+                return;
+            }
             health.Initialize();
         }
 
@@ -33,21 +38,25 @@ namespace _Project.Scripts.Core.Actor
         public void ModifyDamageMultiplier(float value)
         {
             damageMultiplier += value;
+            OnStatsChanged?.Invoke();
         }
 
         public void ModifyFireRateMultiplier(float value)
         {
             fireRateMultiplier += value;
+            OnStatsChanged?.Invoke();
         }
 
         public void ModifyReloadSpeedMultiplier(float value)
         {
             reloadSpeedMultiplier += value;
+            OnStatsChanged?.Invoke();
         }
         
         public void ModifyMoveSpeedMultiplier(float value)
         {
             moveSpeedMultiplier += value;
+            OnStatsChanged?.Invoke();
         }
     }
 }

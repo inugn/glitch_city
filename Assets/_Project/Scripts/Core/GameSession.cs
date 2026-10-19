@@ -3,12 +3,18 @@
     public sealed class GameSession : IGameService
     {
         private readonly EventBus _bus;
-
+        
+        public Player.Player Player { get; private set; }
         public bool RunInProgress { get; private set; }
         public int ArenaIndex { get; private set; } = 1; // 1..N (какую арену играем следующей)
         public int WaveIndex { get; private set; } = 0;  // 0..N (0 = ещё не стартовали)
 
         public GameSession(EventBus bus) => _bus = bus;
+        
+        public void SetPlayer(Player.Player player)
+        {
+            Player = player;
+        }
 
         public void StartRun()
         {

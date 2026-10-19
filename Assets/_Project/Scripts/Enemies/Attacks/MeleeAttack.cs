@@ -17,14 +17,16 @@ namespace _Project.Scripts.Enemies.Attacks
 
         public void Tick()
         {
+            
             if (enemy == null || enemy.Target == null || enemy.Def == null) return;
             if (enemy.State != EnemyState.Attack) return;
             if (Time.time < nextTime) return;
-
+            
             var dist = Vector2.Distance(transform.position, enemy.Target.position);
             if (dist > enemy.Def.meleeRange) return;
-
-            var player = enemy.Target.GetComponentInParent<_Project.Scripts.Player.PlayerHealth>();
+        
+            var player = enemy.Target.GetComponentInParent<Player.Player>();
+            
             if (player != null)
                 player.TakeDamage(enemy.Def.meleeDamage);
 

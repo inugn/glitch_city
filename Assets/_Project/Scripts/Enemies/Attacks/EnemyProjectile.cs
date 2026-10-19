@@ -26,12 +26,10 @@ namespace _Project.Scripts.Enemies.Attacks
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            var player = other.GetComponentInParent<PlayerHealth>();
-            if (player != null)
-            {
-                player.TakeDamage(damage);
-                Destroy(gameObject);
-            }
+            var player = other.GetComponentInParent<Player.Player>();
+            if (player == null) return;
+            player.TakeDamage(damage);
+            Destroy(gameObject);
         }
     }
 }

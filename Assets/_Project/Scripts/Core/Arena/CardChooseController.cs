@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using _Project.Scripts.Core.Card;
 using UnityEngine;
-using _Project.Scripts.Core.Cards;
 
 namespace _Project.Scripts.Core.Arena
 {
@@ -12,32 +12,71 @@ namespace _Project.Scripts.Core.Arena
         [SerializeField] private CardView cardPrefab;
 
         private Action<CardData> onChosen;
-        private readonly List<CardView> spawned = new();
 
-        public void Open(Action<CardData> onCardChosen)
+        // Пул UI-элементов, чтобы не Destroy/Instantiate каждый раз
+        private readonly List<CardView> spawned = new(4);
+
+        public void Open(IReadOnlyList<CardData> cards, Action<CardData> onCardChosen)
         {
+            if (cardsContainer == null || cardPrefab == null)
+            {
+                Debug.LogError("[CardChoiceController] cardsContainer/cardPrefab is not assigned.", this);
+                return;
+            }
+
             onChosen = onCardChosen;
 
-            Clear();
-            SpawnCards();
+            EnsurePoolSize(cards != null ? cards.Count : 0);
+            Bind(cards);
         }
 
-        private void SpawnCards()
+        public void Close()
         {
-            var cards = CardGenerator.Generate(3);
+            onChosen = null;
+            HideAll();
+        }
 
-            foreach (var card in cards)
+        private void EnsurePoolSize(int count)
+        {
+            while (spawned.Count < count)
             {
                 var view = Instantiate(cardPrefab, cardsContainer);
+                view.gameObject.SetActive(false);
+                spawned.Add(view);
+            }
+        }
+
+        private void Bind(IReadOnlyList<CardData> cards)
+        {
+            int count = cards != null ? cards.Count : 0;
+
+            for (int i = 0; i < spawned.Count; i++)
+            {
+                var view = spawned[i];
+
+                if (i >= count)
+                {
+                    view.gameObject.SetActive(false);
+                    continue;
+                }
+
+                var card = cards[i]; // локальная переменная — без сюрпризов с замыканиями
+                view.gameObject.SetActive(true);
 
                 view.Setup(
                     card.Title,
                     GetRarityColor(card.Rarity),
-                    card.PositiveEffect.GetDescription(),
-                    card.NegativeEffect.GetDescription(),
+                    card.PositiveEffect != null ? card.PositiveEffect.GetDescription() : string.Empty,
+                    card.NegativeEffect != null ? card.NegativeEffect.GetDescription() : string.Empty,
                     () => Choose(card)
                 );
             }
+        }
+
+        private void HideAll()
+        {
+            for (int i = 0; i < spawned.Count; i++)
+                spawned[i].gameObject.SetActive(false);
         }
 
         private void Choose(CardData card)
@@ -45,13 +84,7 @@ namespace _Project.Scripts.Core.Arena
             onChosen?.Invoke(card);
         }
 
-        private void Clear()
-        {
-            for (int i = cardsContainer.childCount - 1; i >= 0; i--)
-                Destroy(cardsContainer.GetChild(i).gameObject);
-        }
-
-        private Color GetRarityColor(CardRarity rarity)
+        private static Color GetRarityColor(CardRarity rarity)
         {
             return rarity switch
             {

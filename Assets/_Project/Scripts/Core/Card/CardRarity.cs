@@ -1,4 +1,4 @@
-namespace _Project.Scripts.Core.Arena
+namespace _Project.Scripts.Core.Card
 {
     public enum CardRarity
     {

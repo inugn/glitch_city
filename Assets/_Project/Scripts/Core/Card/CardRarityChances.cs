@@ -1,7 +1,6 @@
-using _Project.Scripts.Core.Arena;
 using UnityEngine;
 
-namespace _Project.Scripts.Core.Cards
+namespace _Project.Scripts.Core.Card
 {
     public static class CardRarityChances
     {

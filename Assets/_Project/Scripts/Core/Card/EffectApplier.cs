@@ -2,7 +2,7 @@ using _Project.Scripts.Core.Actor;
 using _Project.Scripts.Core.Arena;
 using UnityEngine;
 
-namespace _Project.Scripts.Core.Effects
+namespace _Project.Scripts.Core.Card
 {
     //TODO ДОБАВИТЬ ПОДДЕРЖКУ МОДИФИКАТОРОВ ВОЛНЫ
     public sealed class EffectApplier

@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using _Project.Scripts.Enemies.Core;
+﻿using _Project.Scripts.Enemies.Core;
+using UnityEngine;
 
 namespace _Project.Scripts.Enemies.Movement
 {
@@ -14,7 +14,7 @@ namespace _Project.Scripts.Enemies.Movement
         [SerializeField] private float driftSpeed = 1.2f;
 
         [Header("Follow")]
-        [SerializeField] private float followSpeed = 6f;
+        [SerializeField] private float followSpeed = 6f;  // Скорость следования
 
         private EnemyBase enemy;
         private Vector2 startPos;
@@ -40,9 +40,15 @@ namespace _Project.Scripts.Enemies.Movement
 
             switch (enemy.State)
             {
-                case EnemyState.Patrol: Patrol(); break;
+                case EnemyState.Patrol:
+                    Patrol();
+                    break;
+
                 case EnemyState.Chase:
-                case EnemyState.Attack: Follow(); break;
+                case EnemyState.Attack:
+                    Follow();
+                    break;
+
                 case EnemyState.Dead:
                     rb.linearVelocity = Vector2.zero;
                     break;
@@ -67,34 +73,43 @@ namespace _Project.Scripts.Enemies.Movement
         {
             if (enemy.Target == null) return;
 
+            // Получаем текущие координаты игрока и врага
             Vector2 target = enemy.Target.position;
             Vector2 current = rb.position;
 
+            // Рассчитываем расстояние между врагом и игроком
+            float distanceToPlayer = Vector2.Distance(current, target);
+
+            // Если враг дальнего боя (Ranged)
             if (enemy.Def.attack == AttackType.Ranged)
             {
-                float dx = current.x - target.x;
-                if (Mathf.Abs(dx) > 0.2f)
-                    lastSide = dx >= 0f ? 1f : -1f;
+                // Минимальное и максимальное расстояние, которое враг может поддерживать от игрока
+                float minDistance = 3f;  // Минимальное расстояние (если враг слишком близко, он отходит)
+                float maxDistance = 6f;  // Максимальное расстояние (если враг слишком далеко, он приближается)
 
-                float preferred = Mathf.Max(0.5f, enemy.Def.rangedPreferredDistance);
-                float yOff = enemy.Def.rangedVerticalOffset;
-
-                // хотим быть на стороне lastSide на preferred дистанции, чуть выше
-                Vector2 desired = new Vector2(target.x + lastSide * preferred, target.y + yOff);
-
-                var next = Vector2.MoveTowards(current, desired, followSpeed * Time.fixedDeltaTime);
-                rb.MovePosition(next);
-
-                // всегда смотрим на игрока
-                enemy.FaceX(target.x - current.x);
-                return;
+                // Если враг слишком близко, он отходит
+                if (distanceToPlayer < minDistance)
+                {
+                    rb.MovePosition(current - (target - current).normalized * enemy.Def.moveSpeed * Time.fixedDeltaTime);
+                }
+                // Если враг слишком далеко, он приближается
+                else if (distanceToPlayer > maxDistance)
+                {
+                    rb.MovePosition(current + (target - current).normalized * enemy.Def.moveSpeed * Time.fixedDeltaTime);
+                }
+            }
+            // Если враг ближнего боя (Melee) или взрывной
+            else if (enemy.Def.attack == AttackType.Melee || enemy.Def.attack == AttackType.Explode)
+            {
+                // Просто идём в сторону игрока
+                rb.MovePosition(current + (target - current).normalized * enemy.Def.moveSpeed * Time.fixedDeltaTime);
             }
 
-            // melee/explode — прямо в игрока
-            var next2 = Vector2.MoveTowards(current, target, followSpeed * Time.fixedDeltaTime);
-            rb.MovePosition(next2);
+            // Поворот врага к игроку (если он двигается)
             enemy.FaceX(target.x - current.x);
         }
 
+
+        
     }
 }

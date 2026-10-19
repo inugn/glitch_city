@@ -1,29 +1,31 @@
 ﻿using System;
+using _Project.Scripts.Core.Actor;
 using UnityEngine;
 
 namespace _Project.Scripts.Enemies.Core
 {
-    [RequireComponent(typeof(Collider2D))]
-    public class EnemyBase : MonoBehaviour
+    public class EnemyBase : Actor
     {
-        [SerializeField] protected SpriteRenderer sprite;
+        [SerializeField] private SpriteRenderer sprite;
 
         public EnemyDefinition Def { get; private set; }
         public Transform Target { get; private set; }
 
-        public int Hp { get; private set; }
         public bool IsDead { get; private set; }
-
         public EnemyState State { get; private set; } = EnemyState.Patrol;
+
         public event Action<EnemyBase> Died;
 
         private float hitTintUntil;
 
-        public virtual void Init(EnemyDefinition def, Transform target)
+        public void Init(EnemyDefinition def, Transform target)
         {
             Def = def;
             Target = target;
-            Hp = def != null ? def.maxHp : 1;
+
+            // Инициализация через экземпляр Stats (это будет работать)
+            if (Stats != null) 
+                Stats.Initialize();
 
             SetState(EnemyState.Patrol);
         }
@@ -57,11 +59,15 @@ namespace _Project.Scripts.Enemies.Core
         {
             if (IsDead) return;
 
-            Hp -= amount;
-            FlashHit();
+            // Доступ через экземпляр Stats
+            if (Stats != null) 
+            {
+                Stats.Health.TakeDamage(amount);  // Доступ к экземпляру Health
+                FlashHit();
 
-            if (Hp <= 0)
-                Die();
+                if (Stats.Health.IsDead)  // Проверка через экземпляр Health
+                    Die();
+            }
         }
 
         protected virtual void Die()

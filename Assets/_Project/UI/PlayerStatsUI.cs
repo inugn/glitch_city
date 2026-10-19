@@ -16,17 +16,23 @@ namespace _Project.UI
         public void Initialize(Player player)
         {
             this.player = player;
+            player.Stats.OnStatsChanged += RefreshStats;
+            player.Stats.Health.OnHealthChanged += RefreshHealth;
             RefreshStats();
+            RefreshHealth(player.Stats.Health.CurrentHealth, player.Stats.Health.MaxHealth);
         }
-
-        private void Update()
+        
+        private void RefreshHealth(int currentHealth, int maxHealth)
+        {
+            healthBar.UpdateHealth(currentHealth, maxHealth);
+        }
+        
+        private void OnDestroy()
         {
             if (player == null) return;
 
-            healthBar.UpdateHealth(
-                player.Stats.Health.CurrentHealth,
-                player.Stats.Health.MaxHealth
-            );
+            player.Stats.OnStatsChanged -= RefreshStats;
+            player.Stats.Health.OnHealthChanged -= RefreshHealth;
         }
 
         private void RefreshStats()

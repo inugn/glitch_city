@@ -10,7 +10,7 @@ namespace _Project.Scripts.Core.Arena
     {
         [Header("Scene refs")]
         [SerializeField] private DoorTrigger rightDoor;
-        [SerializeField] private CardChoiceStub cardChoice;
+        [SerializeField] private CardChoiceStub cardChoice; // может быть null на BossArena
         [SerializeField] private WaveManager waveManager;
 
         private GameSession session;
@@ -18,6 +18,7 @@ namespace _Project.Scripts.Core.Arena
         private ArenaDefinition arenaDef;
 
         private bool isBossScene;
+        private int pendingWaveIndex;
 
         private void Awake()
         {
@@ -27,7 +28,8 @@ namespace _Project.Scripts.Core.Arena
             if (waveManager == null)
                 waveManager = FindFirstObjectByType<WaveManager>();
 
-            // cardChoice может быть null для BossArena (если без карт)
+            if (waveManager == null)
+                Debug.LogError("[ArenaFlow] WaveManager not found in scene.", this);
         }
 
         private void OnEnable()
@@ -60,14 +62,21 @@ namespace _Project.Scripts.Core.Arena
             session = App.Instance.Services.Get<GameSession>();
             runDef = App.Instance.Services.Get<RunDefinition>();
 
-            if (session == null || runDef == null)
+            if (session == null)
             {
-                Debug.LogError("[ArenaFlow] GameSession or RunDefinition missing in services.", this);
+                Debug.LogError("[ArenaFlow] GameSession not found in services.", this);
                 enabled = false;
                 return;
             }
 
-            var sceneName = SceneManager.GetActiveScene().name;
+            if (runDef == null)
+            {
+                Debug.LogError("[ArenaFlow] RunDefinition not found in services. Assign it in App and register in Services.", this);
+                enabled = false;
+                return;
+            }
+
+            string sceneName = SceneManager.GetActiveScene().name;
             isBossScene = sceneName == SceneNames.BossArena;
 
             if (isBossScene)
@@ -97,7 +106,7 @@ namespace _Project.Scripts.Core.Arena
             // Дверь закрыта пока не пройдены все волны этой арены
             rightDoor.SetLocked(true);
 
-            // “перед первой волной”
+            // Перед первой волной: 0 -> next = 1
             session.SetWave(0);
 
             StartNextWave();
@@ -107,27 +116,36 @@ namespace _Project.Scripts.Core.Arena
         {
             int nextWave = session.WaveIndex + 1;
 
+            // Волн больше нет -> открыть дверь
             if (!waveManager.HasWave(nextWave))
             {
-                // волн больше нет
                 rightDoor.SetLocked(false);
                 return;
             }
 
-            // BossArena или арена без карточек — стартуем сразу
             bool useCardsNow =
+                !isBossScene &&
                 cardChoice != null &&
                 ((nextWave == 1 && arenaDef.showCardChoiceBeforeFirstWave) ||
                  (nextWave > 1 && arenaDef.showCardChoiceBetweenWaves));
 
             if (useCardsNow)
             {
-                cardChoice.Open(() => StartWave(nextWave));
+                pendingWaveIndex = nextWave;
+
+                // Вариант без передачи CardData (полностью совместим с текущим Stub)
+                cardChoice.Open(OnCardChoiceClosed);
             }
             else
             {
                 StartWave(nextWave);
             }
+        }
+
+        private void OnCardChoiceClosed()
+        {
+            // Карточку выбрали (и UI закрылся) -> стартуем волну
+            StartWave(pendingWaveIndex);
         }
 
         private void StartWave(int waveIndex)
@@ -138,15 +156,20 @@ namespace _Project.Scripts.Core.Arena
 
         private void OnWaveCleared()
         {
-            // Если следующей волны нет — открыть дверь
+            // Следующей волны нет -> открыть дверь
             if (!waveManager.HasWave(session.WaveIndex + 1))
             {
                 rightDoor.SetLocked(false);
                 return;
             }
 
-            // иначе — следующая волна
             StartNextWave();
+        }
+
+        // Debug: можно дернуть кнопкой чтобы перейти к следующему шагу
+        public void DebugCompleteWave()
+        {
+            OnWaveCleared();
         }
     }
 }

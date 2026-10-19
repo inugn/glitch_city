@@ -31,7 +31,7 @@ namespace _Project.Scripts.Enemies.Attacks
             if (!armed || enemy == null) return;
             armed = false;
 
-            var player = enemy.Target.GetComponentInParent<PlayerHealth>();
+            var player = enemy.Target.GetComponentInParent<Player.Player>();
             if (player != null)
                 player.TakeDamage(enemy.Def.explodeDamage);
 
@@ -43,7 +43,7 @@ namespace _Project.Scripts.Enemies.Attacks
             // fallback, если всё же используешь отдельный trigger-коллайдер
             if (!armed || enemy == null) return;
 
-            var player = other.GetComponentInParent<PlayerHealth>();
+            var player = other.GetComponentInParent<Player.Player>();
             if (player != null)
                 Explode();
         }

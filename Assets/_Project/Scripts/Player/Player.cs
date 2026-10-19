@@ -14,6 +14,7 @@ namespace _Project.Scripts.Player
 
         public void TakeDamage(int damage)
         {
+            Debug.Log(stats.Health.CurrentHealth + "[" + stats.Health.MaxHealth + "]");
             Stats.Health.TakeDamage(damage);
         }
     }

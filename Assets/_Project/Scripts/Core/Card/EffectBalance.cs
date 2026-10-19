@@ -1,4 +1,6 @@
-namespace _Project.Scripts.Core.Arena
+using _Project.Scripts.Core.Arena;
+
+namespace _Project.Scripts.Core.Card
 {
     public static class EffectBalance
     {

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using _Project.Scripts.Core.Cards;
+using _Project.Scripts.Core.Arena;
 using UnityEngine;
 
-namespace _Project.Scripts.Core.Arena
+namespace _Project.Scripts.Core.Card
 {
     public static class CardGenerator
     {

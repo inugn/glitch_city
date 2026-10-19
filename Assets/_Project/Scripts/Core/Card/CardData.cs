@@ -1,6 +1,7 @@
 using System;
+using _Project.Scripts.Core.Arena;
 
-namespace _Project.Scripts.Core.Arena
+namespace _Project.Scripts.Core.Card
 {
     [Serializable]
     public class CardData
