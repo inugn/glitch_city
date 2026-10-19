@@ -255,8 +255,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dda8f8421f9a46e482d2454f77aa553c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Player.Player
-  inputReader: {fileID: 0}
-  controller: {fileID: 0}
+  stats:
+    health:
+      maxHealth: 100
+      regenPerSecond: 0
+    fireRateMultiplier: 1
+    reloadSpeedMultiplier: 1
+    damageMultiplier: 1
+    moveSpeedMultiplier: 1
 --- !u!1 &7249562386371026556
 GameObject:
   m_ObjectHideFlags: 0

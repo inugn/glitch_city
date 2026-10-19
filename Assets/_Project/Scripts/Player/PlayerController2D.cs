@@ -2,6 +2,8 @@
 using UnityEngine;
 using _Project.Scripts.Core;
 using _Project.Scripts.Core.Input;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
+using Stats = _Project.Scripts.Core.Actor.Stats;
 
 namespace _Project.Scripts.Player
 {
@@ -14,6 +16,7 @@ namespace _Project.Scripts.Player
 
         [Header("Move")]
         [SerializeField] private float moveSpeed = 6f;
+        private Stats stats;
 
         [Header("Jump")]
         [SerializeField] private float jumpImpulse = 8f;
@@ -45,6 +48,16 @@ namespace _Project.Scripts.Player
                 enabled = false;
                 return;
             }
+            
+            var player = GetComponent<Player>();
+            if (player == null)
+            {
+                Debug.LogError("[PlayerController2D] Player component not found.", this);
+                enabled = false;
+                return;
+            }
+
+            stats = player.Stats;
 
             input = App.Instance.Services.Get<ICoreInputReader>();
             if (input == null)
@@ -78,8 +91,8 @@ namespace _Project.Scripts.Player
                 return;
             }
             */
-
-            float vx = input.MoveX * moveSpeed;
+            float speedMultiplier = stats != null ? stats.MoveSpeedMultiplier : 1f;
+            float vx = input.MoveX * moveSpeed * speedMultiplier;
             rb.linearVelocity = new Vector2(vx, rb.linearVelocity.y);
 
             if (sprite != null)

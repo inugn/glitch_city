@@ -25,6 +25,5 @@ namespace _Project.UI
         {
             playerStatsUI.Initialize(player);
         }
-
     }
 }

@@ -11,7 +11,11 @@ namespace _Project.Scripts.Core.Actor
         protected virtual void Awake()
         {
             if (stats == null)
-                stats = new Stats();
+            {
+                Debug.LogError($"[{name}] Stats is not assigned in Inspector.", this);
+                enabled = false;
+                return;
+            }
 
             stats.Initialize();
         }

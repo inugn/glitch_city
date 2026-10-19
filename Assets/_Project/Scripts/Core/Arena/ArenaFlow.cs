@@ -1,4 +1,5 @@
-﻿using _Project.Scripts.Core.World;
+﻿using _Project.Scripts.Core.Effects;
+using _Project.Scripts.Core.World;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Arena
@@ -7,6 +8,10 @@ namespace _Project.Scripts.Core.Arena
     {
         [SerializeField] private DoorTrigger rightDoor;
         [SerializeField] private CardChoiceStub cardChoice;
+        [SerializeField] private Player.Player player;
+
+        private EffectApplier effectApplier;
+
 
         private GameSession session;
 
@@ -50,6 +55,24 @@ namespace _Project.Scripts.Core.Arena
                 enabled = false;
                 return;
             }
+            
+            if (player == null)
+            {
+                Debug.LogError("[ArenaFlow] Player not found", this);
+                enabled = false;
+                return;
+            }
+            
+            effectApplier = new EffectApplier(
+                player.Stats
+            );
+            
+            if (effectApplier == null)
+            {
+                Debug.LogError("[ArenaFlow] EffectApplier not found", this);
+                enabled = false;
+                return;
+            }
 
             // На арене правая дверь закрыта, пока не пройдены 3 волны
             rightDoor.SetLocked(true);
@@ -68,8 +91,15 @@ namespace _Project.Scripts.Core.Arena
 
         private void OnCardChosen(CardData card)
         {
-            // Здесь позже будут применяться эффекты карточки.
-            // Сейчас просто считаем, что волна началась.
+            ApplyCard(card);
+            
+            //TODO Начало волны
+        }
+        
+        private void ApplyCard(CardData card)
+        {
+            effectApplier.Apply(card.PositiveEffect);
+            effectApplier.Apply(card.NegativeEffect);
         }
 
         // Заглушка: вызови эту функцию кнопкой в UI, чтобы “завершить волну”

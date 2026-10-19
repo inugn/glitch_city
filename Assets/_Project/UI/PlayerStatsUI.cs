@@ -34,9 +34,9 @@ namespace _Project.UI
             var stats = player.Stats;
 
             // TODO сделать получение значений характеристик
-            attackRow.SetData("Атака", 12 * stats.DamageMultiplier, stats.DamageMultiplier);
-            fireRateRow.SetData("Скорость перезарядки", 12 * stats.FireRateMultiplier, stats.FireRateMultiplier);
-            reloadSpeedRow.SetData("Скорострельность", 12 * stats.ReloadSpeedMultiplier, stats.ReloadSpeedMultiplier);
+            attackRow.SetData("Урон", 12 * stats.DamageMultiplier, stats.DamageMultiplier);
+            fireRateRow.SetData("Скорость перезарядки", 12 * stats.ReloadSpeedMultiplier, stats.ReloadSpeedMultiplier);
+            reloadSpeedRow.SetData("Скорострельность", 12 * stats.FireRateMultiplier, stats.FireRateMultiplier);
         }
     }
 }

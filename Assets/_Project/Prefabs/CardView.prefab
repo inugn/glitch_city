@@ -219,7 +219,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.20247419, g: 0.4716981, b: 0.39580312, a: 1}
+  m_Color: {r: 0.09758811, g: 0.4056604, b: 0.2771138, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -385,10 +385,10 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.127937, g: 0.13807264, b: 0.23584908, a: 1}
-    m_HighlightedColor: {r: 0.10412957, g: 0.11039248, b: 0.18867922, a: 1}
-    m_PressedColor: {r: 0.071422204, g: 0.07661383, b: 0.14150941, a: 1}
-    m_SelectedColor: {r: 0.14411727, g: 0.13932894, b: 0.2924528, a: 1}
+    m_NormalColor: {r: 0.2767232, g: 0.115566045, b: 0.46226418, a: 1}
+    m_HighlightedColor: {r: 0.22810203, g: 0.097899616, b: 0.3773585, a: 1}
+    m_PressedColor: {r: 0.14332278, g: 0.054378778, b: 0.24528301, a: 1}
+    m_SelectedColor: {r: 0.34897968, g: 0.06087574, b: 0.6792453, a: 1}
     m_DisabledColor: {r: 0.25792095, g: 0.2583824, b: 0.26415092, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -517,7 +517,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 2.74}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8311937621512904517
@@ -681,7 +681,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.39607844, g: 0.22745098, b: 0.24402408, a: 1}
+  m_Color: {r: 0.3962264, g: 0.12230905, b: 0.11400853, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

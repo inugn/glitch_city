@@ -56,41 +56,7 @@ namespace _Project.Scripts.Core.Arena
                     }
                 });
             }
-
             return result;
-        }
-
-        private static CardEffect CreateEffect(EffectType type, CardRarity rarity, bool positive)
-        {
-            return new CardEffect
-            {
-                Type = type,
-                IsPositive = positive,
-                Value = EffectBalance.GetValue(type, rarity)
-            };
-        }
-
-        private static EffectType GetUniqueEffect(
-            EffectType[] pool,
-            HashSet<EffectType> used)
-        {
-            EffectType type;
-            do
-            {
-                type = pool[Random.Range(0, pool.Length)];
-            }
-            while (used.Contains(type));
-
-            return type;
-        }
-
-        private static CardRarity RollRarity()
-        {
-            float roll = Random.value;
-
-            if (roll < 0.6f) return CardRarity.Common;
-            if (roll < 0.9f) return CardRarity.Rare;
-            return CardRarity.Epic;
         }
     }
 }

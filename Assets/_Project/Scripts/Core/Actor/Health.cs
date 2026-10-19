@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace _Project.Scripts.Core.Actor
 {
+    [System.Serializable]
     public class Health
     {
         [SerializeField] private int maxHealth = 100;
