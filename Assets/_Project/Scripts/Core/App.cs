@@ -1,5 +1,6 @@
 ﻿using _Project.Scripts.Core.Audio;
 using _Project.Scripts.Core.Input;
+using _Project.Scripts.Core.Run;
 using UnityEngine;
 
 namespace _Project.Scripts.Core
@@ -14,6 +15,9 @@ namespace _Project.Scripts.Core
 
         [Header("Systems (component)")]
         [SerializeField] private CoreInputReader coreInputReader; // лежит в Systems
+        
+        [Header("Run Config (ScriptableObject)")]
+        [SerializeField] private RunDefinition runDefinition;
 
         private void Awake()
         {
@@ -42,31 +46,29 @@ namespace _Project.Scripts.Core
         {
             Services = new ServiceRegistry();
 
-            // Core services
             var bus = new EventBus();
             Services.Register(bus);
 
             Services.Register(new AudioSettingsService());
-            
+
             var pause = new PauseService(bus);
             Services.Register(pause);
 
-            // Run / Meta
             Services.Register(new GameSession(bus));
             Services.Register(new MetaProgress());
 
-            // SceneLoader как MonoBehaviour-сервис
             Services.Register(sceneLoader);
 
-            // ✅ Ввод как сервис: регистрируем по интерфейсу
-            if (coreInputReader == null)
-            {
-                Debug.LogError("[App] CoreInputReader not found. Assign it in Inspector or keep it as child of App.", this);
-            }
-            else
-            {
+            if (coreInputReader != null)
                 Services.Register<ICoreInputReader>(coreInputReader);
-            }
+            else
+                Debug.LogError("[App] CoreInputReader not found.", this);
+
+            // ✅ Регистрируем конфиг прогрессии
+            if (runDefinition != null)
+                Services.Register(runDefinition);
+            else
+                Debug.LogError("[App] RunDefinition is not assigned in Inspector.", this);
         }
     }
 }

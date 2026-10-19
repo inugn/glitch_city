@@ -1,4 +1,5 @@
 ﻿using UnityEngine.SceneManagement;
+using _Project.Scripts.Core.Run;
 
 namespace _Project.Scripts.Core.World
 {
@@ -6,20 +7,18 @@ namespace _Project.Scripts.Core.World
     {
         public static void TryUseDoor(DoorTrigger.DoorSide side)
         {
-            // По требованиям: левая дверь всегда недоступна (назад нельзя)
             if (side == DoorTrigger.DoorSide.Left)
                 return;
 
             var services = App.Instance.Services;
             var session = services.Get<GameSession>();
             var loader = services.Get<SceneLoader>();
+            var runDef = services.Get<RunDefinition>();
 
             var current = SceneManager.GetActiveScene().name;
 
-            // MVP-логика переходов (без сложных условий, потом расширим):
             if (current == SceneNames.StartZone)
             {
-                // Правая дверь из стартовой зоны -> первая арена
                 session.StartRun();
                 loader.Load(SceneNames.Arena);
                 return;
@@ -27,15 +26,18 @@ namespace _Project.Scripts.Core.World
 
             if (current == SceneNames.Arena)
             {
-                // После арены -> убежище
+                // ✅ арена пройдена -> двигаем индекс на следующую
+                session.SetArena(session.ArenaIndex + 1);
                 loader.Load(SceneNames.Shelter);
                 return;
             }
 
             if (current == SceneNames.Shelter)
             {
-                // После убежища: если уже 3 арены пройдены -> босс, иначе -> следующая арена
-                if (session.ArenaIndex >= 3)
+                int arenasCount = runDef != null ? runDef.ArenasCount : 3;
+
+                // После прохождения 3 арен ArenaIndex станет 4
+                if (session.ArenaIndex > arenasCount)
                     loader.Load(SceneNames.BossArena);
                 else
                     loader.Load(SceneNames.Arena);
@@ -45,7 +47,7 @@ namespace _Project.Scripts.Core.World
 
             if (current == SceneNames.BossArena)
             {
-                // После босса -> стартовая зона (конец забега)
+                // После босса -> конец забега
                 session.EndRun();
                 loader.Load(SceneNames.StartZone);
                 return;
