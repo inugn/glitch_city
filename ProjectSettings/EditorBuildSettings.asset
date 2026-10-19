@@ -17,6 +17,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project/Scenes/Shelter.unity
     guid: d2925e9d9516abd479110a65e9638dc5
+  - enabled: 1
+    path: Assets/_Project/Scenes/Menu.unity
+    guid: b757619175c0d45419d3a3d8ab765acf
+  - enabled: 1
+    path: Assets/_Project/Scenes/Settings.unity
+    guid: 2eba56c2739e80243b6ebc5ef86b8cdd
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
