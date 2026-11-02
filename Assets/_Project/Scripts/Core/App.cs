@@ -1,4 +1,5 @@
 ﻿using _Project.Scripts.Core.Audio;
+using _Project.Scripts.Core.Card;
 using _Project.Scripts.Core.Input;
 using _Project.Scripts.Core.Run;
 using UnityEngine;
@@ -54,7 +55,9 @@ namespace _Project.Scripts.Core
             var pause = new PauseService(bus);
             Services.Register(pause);
 
-            Services.Register(new GameSession(bus));
+            var session = new GameSession(bus);
+            Services.Register(session);
+            
             Services.Register(new MetaProgress());
 
             Services.Register(sceneLoader);
@@ -63,6 +66,8 @@ namespace _Project.Scripts.Core
                 Services.Register<ICoreInputReader>(coreInputReader);
             else
                 Debug.LogError("[App] CoreInputReader not found.", this);
+            
+            Services.Register(new EffectApplier(session));
 
             // ✅ Регистрируем конфиг прогрессии
             if (runDefinition != null)

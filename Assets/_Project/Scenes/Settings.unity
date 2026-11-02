@@ -967,10 +967,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: 5.317514
       objectReference: {fileID: 0}
-    - target: {fileID: 3117578131935069478, guid: 8335bd2e35e11194ca8ae3a7b865159a, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -54
-      objectReference: {fileID: 0}
     - target: {fileID: 3597666361051338865, guid: 8335bd2e35e11194ca8ae3a7b865159a, type: 3}
       propertyPath: m_Name
       value: SfxBar
@@ -1122,14 +1118,6 @@ PrefabInstance:
     - target: {fileID: 7091589635486185325, guid: 8335bd2e35e11194ca8ae3a7b865159a, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: -5.197525
-      objectReference: {fileID: 0}
-    - target: {fileID: 7992835122482453817, guid: 8335bd2e35e11194ca8ae3a7b865159a, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7992835122482453817, guid: 8335bd2e35e11194ca8ae3a7b865159a, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -55
       objectReference: {fileID: 0}
     - target: {fileID: 7992835122482453817, guid: 8335bd2e35e11194ca8ae3a7b865159a, type: 3}
       propertyPath: m_ConstrainProportionsScale
@@ -2073,7 +2061,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Core.App
   sceneLoader: {fileID: 236991826}
   coreInputReader: {fileID: 731509825}
-  runDefinition: {fileID: 0}
 --- !u!1001 &2080800257
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2176,7 +2163,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3961790507629853686, guid: 8335bd2e35e11194ca8ae3a7b865159a, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 3
+      value: 53.24994
       objectReference: {fileID: 0}
     - target: {fileID: 3961790507629853686, guid: 8335bd2e35e11194ca8ae3a7b865159a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

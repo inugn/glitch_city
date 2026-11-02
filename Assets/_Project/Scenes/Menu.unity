@@ -385,7 +385,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: GLITCH CITY
+  m_text: R3B3L-PUNK
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 76b9a8610017bb34eadd65a9fe8e2b08, type: 2}
   m_sharedMaterial: {fileID: -2624150358634310548, guid: 76b9a8610017bb34eadd65a9fe8e2b08, type: 2}
@@ -527,7 +527,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Core.App
   sceneLoader: {fileID: 1553009434}
   coreInputReader: {fileID: 2082224744}
-  runDefinition: {fileID: 0}
 --- !u!1001 &547191070
 PrefabInstance:
   m_ObjectHideFlags: 0

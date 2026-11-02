@@ -96,14 +96,7 @@ namespace _Project.Scripts.Core.Arena
 
         private void ApplyCard(CardData card)
         {
-            // Пока MVP: просто лог. Эффекты подключим позже.
-            Debug.Log($"[CardChoice] Chosen: {card.Title}", this);
-
-            if (card.PositiveEffect != null)
-                Debug.Log($"[CardChoice] Positive: {card.PositiveEffect.GetDescription()}", this);
-
-            if (card.NegativeEffect != null)
-                Debug.Log($"[CardChoice] Negative: {card.NegativeEffect.GetDescription()}", this);
+            App.Instance.Services.Get<EffectApplier>().ApplyCard(card);
         }
 
         private void Close(CardData chosen)

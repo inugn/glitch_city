@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using _Project.Scripts.Core;
+using _Project.UI;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace _Project.Scripts.Player
@@ -52,6 +54,8 @@ namespace _Project.Scripts.Player
             if (playerInstance == null)
             {
                 playerInstance = Instantiate(playerPrefab);
+                App.Instance.Services.Get<GameSession>().SetPlayer(playerInstance.GetComponent<Player>());
+                UIManager.Instance.RegisterPlayer(playerInstance.GetComponent<Player>());
                 playerInstance.name = "Player";
 
                 // очень важно: чтобы DoorTrigger и WaveManager находили игрока

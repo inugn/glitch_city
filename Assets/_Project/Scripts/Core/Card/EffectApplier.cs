@@ -7,27 +7,35 @@ namespace _Project.Scripts.Core.Card
     //TODO ДОБАВИТЬ ПОДДЕРЖКУ МОДИФИКАТОРОВ ВОЛНЫ
     public sealed class EffectApplier
     {
-        private readonly Stats playerStats;
+        private readonly GameSession session;
 
-        public EffectApplier(Stats playerStats)
+        public EffectApplier(GameSession session)
         {
-            if (playerStats == null)
-                throw new System.ArgumentNullException(nameof(playerStats));
-
-            if (playerStats.Health == null)
-                throw new System.InvalidOperationException("PlayerStats.Health is null. Call Stats.Initialize() first.");
-
-            this.playerStats = playerStats;
+            this.session = session;
         }
 
-        public void Apply(CardEffect effect)
+        public void ApplyCard(CardData card)
         {
-            ApplyPlayerEffect(effect);
+            if (card == null)
+            {
+                Debug.LogWarning("[EffectApplier] Card is null.");
+                return;
+            }
+
+            var player = session.Player;
+            if (player == null)
+            {
+                Debug.LogError("[EffectApplier] Player not found in GameSession.");
+                return;
+            }
+
+            ApplyEffect(player.Stats, card.PositiveEffect);
+            ApplyEffect(player.Stats, card.NegativeEffect);
         }
 
         public void ClearRunEffects()
         {
-            ClearPlayerEffects();
+            ClearEffects();
             ClearWaveEffects();
         }
 
@@ -36,39 +44,45 @@ namespace _Project.Scripts.Core.Card
             //TODO сделать очистку модификаторов волны
         }
 
-        private void ClearPlayerEffects()
+        private void ClearEffects()
         {
-            playerStats.ModifyDamageMultiplier(1f - playerStats.DamageMultiplier);
-            playerStats.ModifyFireRateMultiplier(1f - playerStats.FireRateMultiplier);
-            playerStats.ModifyReloadSpeedMultiplier(1f - playerStats.ReloadSpeedMultiplier);
+            var player = session.Player;
+            if (player == null)
+            {
+                Debug.LogError("[EffectApplier] Player not found in GameSession.");
+                return;
+            }
+            player.Stats.ModifyDamageMultiplier(1f - player.Stats.DamageMultiplier);
+            player.Stats.ModifyFireRateMultiplier(1f - player.Stats.FireRateMultiplier);
+            player.Stats.ModifyReloadSpeedMultiplier(1f - player.Stats.ReloadSpeedMultiplier);
         }
 
-        private void ApplyPlayerEffect(CardEffect effect)
+        private void ApplyEffect(Stats stats, CardEffect effect)
         {
             switch (effect.Type)
             {
                 case EffectType.DamageMultiplier:
-                    playerStats.ModifyDamageMultiplier(effect.Value);
+                    stats.ModifyDamageMultiplier(effect.Value);
                     break;
 
                 case EffectType.FireRateMultiplier:
-                    playerStats.ModifyFireRateMultiplier(effect.Value);
+                    stats.ModifyFireRateMultiplier(effect.Value);
                     break;
 
                 case EffectType.ReloadSpeedMultiplier:
-                    playerStats.ModifyReloadSpeedMultiplier(effect.Value);
+                    stats.ModifyReloadSpeedMultiplier(effect.Value);
                     break;
 
                 case EffectType.MoveSpeedMultiplier:
-                    playerStats.ModifyMoveSpeedMultiplier(effect.Value);
+                    stats.ModifyMoveSpeedMultiplier(effect.Value);
                     break;
                 
                 case EffectType.MaxHealthBonus:
-                    playerStats.Health.ModifyMaxHealth((int)effect.Value);
+                    stats.Health.ModifyMaxHealth((int)effect.Value);
                     break;
 
                 case EffectType.HealInstant:
-                    playerStats.Health.Heal((int)effect.Value);
+                    stats.Health.Heal((int)effect.Value);
                     break;
 
                 default:
