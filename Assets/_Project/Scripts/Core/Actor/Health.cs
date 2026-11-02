@@ -21,6 +21,7 @@ namespace _Project.Scripts.Core.Actor
 
         public void Initialize()
         {
+            maxHealth = 100;
             CurrentHealth = maxHealth;
             OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
         }
@@ -59,7 +60,7 @@ namespace _Project.Scripts.Core.Actor
             maxHealth += value;
 
             if (heal)
-                CurrentHealth = maxHealth;
+                CurrentHealth += value;
             else
                 CurrentHealth = Mathf.Min(CurrentHealth, maxHealth);
 

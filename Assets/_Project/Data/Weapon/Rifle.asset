@@ -23,3 +23,4 @@ MonoBehaviour:
   spreadAngle: 5
   projectileDefinition: {fileID: 11400000, guid: 8b68ecb4ff598134aa9d255d9e4e7fed, type: 2}
   requiredLevel: 2
+  shotSfx: {fileID: 8300000, guid: 26e19616f6ba9f6469e9d3d6c38b23fe, type: 3}

@@ -20,8 +20,8 @@ namespace _Project.Scripts.Core
 
             _editingCopy = _audioService.Current.Clone();
 
-            musicSlider.value = _editingCopy.MusicVolume;
-            sfxSlider.value = _editingCopy.SfxVolume;
+            _editingCopy.MusicVolume = musicSlider.value;
+            _editingCopy.SfxVolume = sfxSlider.value;
 
             musicSlider.onValueChanged.AddListener(OnMusicChanged);
             sfxSlider.onValueChanged.AddListener(OnSfxChanged);
@@ -29,6 +29,7 @@ namespace _Project.Scripts.Core
 
         private void OnMusicChanged(float value)
         {
+
             _editingCopy.MusicVolume = value;
         }
 
@@ -39,7 +40,11 @@ namespace _Project.Scripts.Core
 
         public void Apply()
         {
-            _audioService.Apply(_editingCopy);
+            float music = musicSlider.value;
+            float sfx = sfxSlider.value;
+
+            _audioService.Apply(new AudioSettingsData { MusicVolume = music, SfxVolume = sfx });
+            
             ReturnToPreviousScene();
         }
 

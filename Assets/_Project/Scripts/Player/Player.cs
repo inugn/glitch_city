@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using _Project.Scripts.Core;
 using _Project.Scripts.Core.Actor;
+using _Project.Scripts.Core.Audio;
 using _Project.Scripts.Weapon;
 using _Project.UI;
 using Unity.VisualScripting;
@@ -13,6 +14,7 @@ namespace _Project.Scripts.Player
     public class Player : Actor
     {
         [SerializeField] private List<WeaponDefinition> startingWeapons;
+        [SerializeField] private AudioClip damageSfx;
         private PlayerCombat combat;
         public PlayerCombat Combat => combat;
         public event Action OnSlotsInitialized;
@@ -37,6 +39,9 @@ namespace _Project.Scripts.Player
         {
             Debug.Log(stats.Health.CurrentHealth + "[" + stats.Health.MaxHealth + "]");
             Stats.Health.TakeDamage(damage);
+            
+            var sfx = App.Instance.Services.Get<SfxService>();
+            sfx.Play(damageSfx);
         }
         
         public void InitializeSlots(List<WeaponDefinition> startingWeapons)
@@ -50,8 +55,13 @@ namespace _Project.Scripts.Player
             base.OnDeath();
 
             Combat.enabled = false;
-
             App.Instance.Services.Get<GameSession>().EndRun();
+        }
+        
+        public void Respawn()
+        {
+            Stats.Health.Initialize();
+            Combat.enabled = true;
         }
     }
 }

@@ -7,7 +7,7 @@ namespace _Project.Scripts.Core
     {
         public event Action RunStarted;
         public event Action RunEnded;
-
+        public event Action PlayerDead;
         public event Action Paused;
         public event Action Resumed;
 
@@ -18,6 +18,8 @@ namespace _Project.Scripts.Core
 
         public void RaiseRunStarted() => RunStarted?.Invoke();
         public void RaiseRunEnded() => RunEnded?.Invoke();
+        
+        public void RaisePlayerDead() => PlayerDead?.Invoke();
 
         public void RaisePaused() => Paused?.Invoke();
         public void RaiseResumed() => Resumed?.Invoke();

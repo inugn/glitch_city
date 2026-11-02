@@ -1,3 +1,4 @@
+using _Project.Scripts.Core.Actor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using _Project.Scripts.Player;
@@ -14,6 +15,8 @@ namespace _Project.UI
 
         private GameObject hudInstance;
         private DeathScreenView deathScreenView;
+        private BossHealthPresenter bossHealthPresenter;
+        private PauseScreenView pauseScreenView;
         public PlayerStatsUI PlayerStatsUI { get; private set; }
         public CardChoiceStub CardChoice { get; private set; }
 
@@ -38,6 +41,16 @@ namespace _Project.UI
         {
             if (deathScreenView != null)
                 deathScreenView.Show();
+        }
+        
+        public void RegisterBoss(Stats bossStats)
+        {
+            bossHealthPresenter.Bind(bossStats);
+        }
+
+        public void UnregisterBoss()
+        {
+            bossHealthPresenter.Unbind();
         }
         
         private void OnDestroy()
@@ -75,6 +88,9 @@ namespace _Project.UI
                 hudInstance.SetActive(true);
             
             deathScreenView = hudInstance.GetComponentInChildren<DeathScreenView>(true);
+            pauseScreenView = hudInstance.GetComponentInChildren<PauseScreenView>(true);
+            bossHealthPresenter = hudInstance.GetComponentInChildren<BossHealthPresenter>(true);
+            
             ResolveHudRefs();
             TryBindPendingPlayer();
         }

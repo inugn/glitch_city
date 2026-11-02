@@ -58,5 +58,14 @@ namespace _Project.Scripts.Core.Actor
             moveSpeedMultiplier += value;
             OnStatsChanged?.Invoke();
         }
+
+        public void ResetMultipliers()
+        {
+            damageMultiplier = 1;
+            fireRateMultiplier = 1;
+            reloadSpeedMultiplier = 1;
+            moveSpeedMultiplier = 1;
+            OnStatsChanged?.Invoke();
+        }
     }
 }

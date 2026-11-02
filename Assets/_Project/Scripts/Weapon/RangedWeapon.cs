@@ -1,4 +1,6 @@
 using System;
+using _Project.Scripts.Core;
+using _Project.Scripts.Core.Audio;
 using UnityEngine;
 
 namespace _Project.Scripts.Weapon
@@ -103,7 +105,8 @@ namespace _Project.Scripts.Weapon
                 rate *= OwnerStats.FireRateMultiplier;
 
             fireCooldown = 1f / rate;
-            
+            var sfx = App.Instance.Services.Get<SfxService>();
+            sfx.Play(definition.shotSfx);
             RaiseAttack();
             OnShot?.Invoke();
             OnAmmoChanged?.Invoke(ammoInMagazine);

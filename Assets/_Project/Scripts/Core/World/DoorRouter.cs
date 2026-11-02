@@ -26,8 +26,6 @@ namespace _Project.Scripts.Core.World
 
             if (current == SceneNames.Arena)
             {
-                // ✅ арена пройдена -> двигаем индекс на следующую
-                session.SetArena(session.ArenaIndex + 1);
                 loader.Load(SceneNames.Shelter);
                 return;
             }
@@ -36,7 +34,8 @@ namespace _Project.Scripts.Core.World
             {
                 int arenasCount = runDef != null ? runDef.ArenasCount : 3;
 
-                // После прохождения 3 арен ArenaIndex станет 4
+                session.SetArena(session.ArenaIndex + 1);
+
                 if (session.ArenaIndex > arenasCount)
                     loader.Load(SceneNames.BossArena);
                 else
@@ -44,6 +43,7 @@ namespace _Project.Scripts.Core.World
 
                 return;
             }
+
 
             if (current == SceneNames.BossArena)
             {

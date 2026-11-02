@@ -32,16 +32,16 @@ namespace _Project.Scripts.Core
                 return;
             }
 
-            bus.RunEnded += OnRunEnded;
+            bus.PlayerDead += OnPlayerDead;
         }
 
         private void OnDestroy()
         {
             if (bus != null)
-                bus.RunEnded -= OnRunEnded;
+                bus.PlayerDead -= OnPlayerDead;
         }
 
-        private void OnRunEnded()
+        private void OnPlayerDead()
         {
             view.Show();
             StartCoroutine(ReturnToStartZone());

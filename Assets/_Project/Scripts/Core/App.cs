@@ -4,6 +4,7 @@ using _Project.Scripts.Core.Input;
 using _Project.Scripts.Core.Run;
 using _Project.Scripts.Core.Save;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace _Project.Scripts.Core
 {
@@ -20,6 +21,11 @@ namespace _Project.Scripts.Core
         
         [Header("Run Config (ScriptableObject)")]
         [SerializeField] private RunDefinition runDefinition;
+        
+        [Header("Audio")]
+        [SerializeField] private AudioMixer masterMixer;
+        
+        [SerializeField] private MusicController audioController;
         
         private MetaProgressPersistence metaPersistence;
 
@@ -53,7 +59,19 @@ namespace _Project.Scripts.Core
             var bus = new EventBus();
             Services.Register(bus);
 
-            Services.Register(new AudioSettingsService());
+            var audioSource = audioController.GetComponent<AudioSource>();
+            Services.Register(new MusicService(audioSource));
+
+            Services.Register(new AudioSettingsService(masterMixer));
+            
+            var sfxSourceGO = new GameObject("SFX AudioSource");
+            sfxSourceGO.transform.SetParent(transform);
+
+            var sfxSource = sfxSourceGO.AddComponent<AudioSource>();
+            sfxSource.outputAudioMixerGroup = masterMixer.FindMatchingGroups("SFX")[0];
+
+            Services.Register(new SfxService(sfxSource, masterMixer));
+
 
             var pause = new PauseService(bus);
             Services.Register(pause);

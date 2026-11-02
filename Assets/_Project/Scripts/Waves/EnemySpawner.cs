@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using _Project.Scripts.Enemies.Core;
+using _Project.UI;
 
 namespace _Project.Scripts.Waves
 {
@@ -49,6 +50,11 @@ namespace _Project.Scripts.Waves
 
             var enemy = Instantiate(prefab, pos, Quaternion.identity);
 
+            if (def.enemyId == "boss")
+            {
+                UIManager.Instance.RegisterBoss(enemy.Stats);
+            }
+            
             enemy.Init(def, player);
 
             var ai = enemy.GetComponent<EnemyAIController>();

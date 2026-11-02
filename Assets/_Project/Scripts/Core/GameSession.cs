@@ -1,4 +1,6 @@
-﻿namespace _Project.Scripts.Core
+﻿using Unity.VisualScripting;
+
+namespace _Project.Scripts.Core
 {
     public sealed class GameSession : IGameService
     {
@@ -19,12 +21,18 @@
 
         public void StartRun()
         {
+            if (Player != null)
+            {
+                Player.Respawn();
+                Player.Stats.ResetMultipliers();
+            }
             RunInProgress = true;
             ArenaIndex = 1;
             WaveIndex = 0;
             
             Credits = 0;
 
+            _bus.RaiseCreditsChanged(Credits);
             _bus.RaiseRunStarted();
             _bus.RaiseArenaIndexChanged(ArenaIndex);
             _bus.RaiseWaveIndexChanged(WaveIndex);
@@ -38,7 +46,10 @@
             
             Credits = 0;
 
+            _bus.RaiseCreditsChanged(Credits);
             _bus.RaiseRunEnded();
+            if (Player.Stats.Health.IsDead)
+                _bus.RaisePlayerDead();
             _bus.RaiseArenaIndexChanged(ArenaIndex);
             _bus.RaiseWaveIndexChanged(WaveIndex);
         }
@@ -57,7 +68,7 @@
         
         public void AddCredits(int amount) 
         {
-            if (amount <= 0) return;
+            if (amount < 0 && Credits + amount < 0) return;
 
             Credits += amount;
             _bus.RaiseCreditsChanged(Credits);

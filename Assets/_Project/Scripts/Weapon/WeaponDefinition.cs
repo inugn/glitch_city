@@ -33,5 +33,8 @@ namespace _Project.Scripts.Weapon
         
         [Header("Unlock")]
         public int requiredLevel = 1;
+        
+        [Header("Audio")]
+        public AudioClip shotSfx;
     }
 }

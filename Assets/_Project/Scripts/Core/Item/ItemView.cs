@@ -20,7 +20,7 @@ namespace _Project.Scripts.Items
                 icon.sprite = sprite;
         }
         
-        public void SetDisabled(bool disabled)
+        public virtual void SetDisabled(bool disabled)
         {
             float alpha = disabled ? 0.4f : 1f;
 
