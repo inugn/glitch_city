@@ -12,10 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dcdb961026d4b2094f861c64fdab392, type: 3}
   m_Name: TwoGuns
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Weapon.WeaponDefinition
-  weaponId: 2
-  damage: 0
-  fireRate: 0
-  magazineSize: 0
-  reloadTime: 0
+  weaponPrefab: {fileID: 4538392755162228398, guid: 2d6b25e9fcf142242b190974b9a37c2c, type: 3}
+  icon: {fileID: 0}
+  weaponId: "\u0414\u0432\u0430 \u043F\u0438\u0441\u0442\u043E\u043B\u0435\u0442\u0430"
+  damage: 10
+  fireRate: 2
+  magazineSize: 16
+  reloadTime: 1.5
   bulletsPerShot: 2
   spreadAngle: 6
+  projectileDefinition: {fileID: 11400000, guid: 8b68ecb4ff598134aa9d255d9e4e7fed, type: 2}
+  requiredLevel: 1

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using _Project.Scripts.Core;
 using UnityEngine;
 using _Project.Scripts.Enemies.Core;
 
@@ -14,6 +15,9 @@ namespace _Project.Scripts.Waves
 
         [Header("Player (optional). If empty, will auto-resolve by tag 'Player'.")]
         [SerializeField] private Transform player;
+        
+        [Header("Rewards (session credits)")]
+        [SerializeField] private Vector2Int creditsPerKill = new Vector2Int(10, 20);
 
         public int TotalWaves => waves != null ? waves.Length : 0;
         public int CurrentWaveIndex { get; private set; } // 1-based, 0 = none
@@ -25,7 +29,16 @@ namespace _Project.Scripts.Waves
 
         private Coroutine spawnRoutine;
         private bool spawning;
+        
+        private GameSession session;
 
+        private void Start()
+        {
+            // Resolve once (без аллокаций/поисков на каждый килл)
+            if (App.Instance?.Services != null)
+                session = App.Instance.Services.Get<GameSession>();
+        }
+        
         public void SetPlayer(Transform playerTransform) => player = playerTransform;
 
         public void SetWaves(WaveDefinition[] newWaves)
@@ -46,6 +59,19 @@ namespace _Project.Scripts.Waves
             int idx = waveIndex - 1;
             return idx >= 0 && idx < waves.Length && waves[idx] != null;
         }
+        
+        public bool TryGetWaveDefinition(int waveIndex, out WaveDefinition def)
+        {
+            def = null;
+            if (waves == null) return false;
+
+            int idx = waveIndex - 1;
+            if (idx < 0 || idx >= waves.Length) return false;
+
+            def = waves[idx];
+            return def != null;
+        }
+
 
         public void StartWave(int waveIndex)
         {
@@ -162,6 +188,8 @@ namespace _Project.Scripts.Waves
             if (e != null)
                 e.Died -= OnEnemyDied;
 
+            AwardCreditsForKill();
+            
             // Удаляем из буфера swap-last (O(1))
             for (int i = 0; i < aliveCount; i++)
             {
@@ -174,6 +202,26 @@ namespace _Project.Scripts.Waves
             }
 
             TryCompleteIfFinished();
+        }
+
+        private void AwardCreditsForKill()
+        {
+            if (session == null)
+            {
+                // На случай, если WaveManager стартанул раньше App или в сцене без App
+                if (App.Instance?.Services != null)
+                    session = App.Instance.Services.Get<GameSession>();
+
+                if (session == null) return;
+            }
+
+            int min = Mathf.Min(creditsPerKill.x, creditsPerKill.y);
+            int max = Mathf.Max(creditsPerKill.x, creditsPerKill.y);
+
+            // Random.Range(int,int) -> max EXCLUSIVE
+            int reward = UnityEngine.Random.Range(min, max + 1);
+
+            session.AddCredits(reward);
         }
 
         private void TryCompleteIfFinished()

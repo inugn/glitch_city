@@ -11,7 +11,7 @@ namespace _Project.Scripts.Core.Arena
         [SerializeField] private GameObject panelRoot;
         [SerializeField] private CardChoiceController controller;
 
-        [Header("Pause (stub)")]
+        [Header("Pause")]
         [SerializeField] private bool pauseWithTimeScale = true;
 
         private bool isOpen;
@@ -26,35 +26,47 @@ namespace _Project.Scripts.Core.Arena
 
         private void Awake()
         {
-            if (panelRoot == null)
+            AutoWire();
+
+            if (panelRoot != null)
+                panelRoot.SetActive(false);
+        }
+
+        private void AutoWire()
+        {
+            // 1) Если controller не назначен — ищем в сцене, включая НЕактивные
+            if (controller == null)
             {
-                var found = GameObject.Find("CardChoicePanel");
-                if (found != null) panelRoot = found;
+#if UNITY_2023_1_OR_NEWER
+                controller = FindFirstObjectByType<CardChoiceController>(FindObjectsInactive.Include);
+#else
+                controller = FindObjectOfType<CardChoiceController>(true);
+#endif
             }
 
-            if (controller == null && panelRoot != null)
-                controller = panelRoot.GetComponentInChildren<CardChoiceController>(true);
+            // 2) Если panelRoot не назначен — берём объект контроллера (или можно подняться к root)
+            if (panelRoot == null && controller != null)
+                panelRoot = controller.gameObject; // или controller.transform.root.gameObject;
 
-            if (panelRoot != null) panelRoot.SetActive(false);
-            else Debug.LogError("[CardChoiceStub] panelRoot is NULL. Assign CardChoicePanel.", this);
+            // 3) Логи — чтобы сразу видеть, почему не открывается
+            if (panelRoot == null)
+                Debug.LogError("[CardChoiceStub] panelRoot is NULL. Assign CardChoicePanel OR ensure there is CardChoiceController in scene.", this);
 
             if (controller == null)
-                Debug.LogError("[CardChoiceStub] controller is NULL. Assign CardChoiceController.", this);
+                Debug.LogError("[CardChoiceStub] controller is NULL. Assign CardChoiceController OR ensure it exists in scene.", this);
         }
 
         private void OnDisable()
         {
-            // Важно: при выключении (смена сцены/выключение UI) НЕ стартуем волну “случайно”
+            // важно: не триггерим коллбеки при выключении/смене сцены
             ForceCloseWithoutCallback();
         }
 
-        // Legacy API: ArenaFlow может вызывать как раньше
         public void Open(Action onClosedCallback)
         {
             OpenInternal(null, onClosedCallback);
         }
 
-        // Новый API: если кому-то нужна выбранная карта
         public void Open(Action<CardData> onCardChosenCallback)
         {
             OpenInternal(onCardChosenCallback, null);
@@ -64,9 +76,12 @@ namespace _Project.Scripts.Core.Arena
         {
             if (isOpen) return;
 
+            // супер важно: после смен сцен ссылки могли отвалиться
+            AutoWire();
+
             if (panelRoot == null || controller == null)
             {
-                Debug.LogError("[CardChoiceStub] Open() failed: panelRoot/controller not assigned.", this);
+                Debug.LogError("[CardChoiceStub] Open() failed: panelRoot/controller not assigned or not found.", this);
                 return;
             }
 
@@ -89,14 +104,30 @@ namespace _Project.Scripts.Core.Arena
             {
                 if (!isOpen) return;
 
-                ApplyCard(card);
+                ApplyCardSafe(card);
                 Close(card);
             });
         }
 
-        private void ApplyCard(CardData card)
+        private void ApplyCardSafe(CardData card)
         {
-            App.Instance.Services.Get<EffectApplier>().ApplyCard(card);
+            // ВАЖНО: у тебя тут может быть Null, если EffectApplier НЕ зарегистрирован как сервис.
+            // Поэтому делаем безопасно.
+            var services = App.Instance?.Services;
+            if (services == null)
+            {
+                Debug.LogWarning("[CardChoiceStub] App/Services not ready. Card effect was NOT applied.", this);
+                return;
+            }
+
+            var applier = services.Get<EffectApplier>();
+            if (applier == null)
+            {
+                Debug.LogWarning("[CardChoiceStub] EffectApplier not found in Services. Card effect was NOT applied.", this);
+                return;
+            }
+
+            applier.ApplyCard(card); // оставляю как у тебя, но если метода нет — скажи, поправим под твою версию
         }
 
         private void Close(CardData chosen)
@@ -104,10 +135,10 @@ namespace _Project.Scripts.Core.Arena
             if (!isOpen) return;
 
             isOpen = false;
-
             RestorePause();
 
-            controller.Close();
+            if (controller != null)
+                controller.Close();
 
             if (panelRoot != null)
                 panelRoot.SetActive(false);
@@ -128,7 +159,6 @@ namespace _Project.Scripts.Core.Arena
             if (!isOpen) return;
 
             isOpen = false;
-
             RestorePause();
 
             if (controller != null)
@@ -148,7 +178,7 @@ namespace _Project.Scripts.Core.Arena
 
             if (Time.timeScale <= 0f)
             {
-                pausedHere = false; // кто-то другой уже поставил паузу
+                pausedHere = false;
                 return;
             }
 

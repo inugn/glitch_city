@@ -18,7 +18,7 @@ namespace _Project.Scripts.Core
             
             var services = App.Instance.Services;
             services.Get<GameSession>().StartRun();
-            services.Get<SceneLoader>().Load(SceneNames.Arena);
+            services.Get<SceneLoader>().Load(SceneNames.StartZone);
         }
         
         public void ContinueRun()

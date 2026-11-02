@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace _Project.Scripts.Weapon
 {
@@ -7,12 +8,12 @@ namespace _Project.Scripts.Weapon
         public event Action OnShot;
         public event Action OnReloadStarted;
         public event Action OnReloadFinished;
-
-        protected readonly WeaponDefinition definition;
-
+        public event Action<int> OnAmmoChanged;
+        
         protected int ammoInMagazine;
         protected float fireCooldown;
         protected bool isReloading;
+        public int CurrentAmmo => ammoInMagazine;
         
         private float reloadTimer;
 
@@ -23,7 +24,7 @@ namespace _Project.Scripts.Weapon
 
         public bool IsReloading => isReloading;
 
-        protected RangedWeapon(WeaponDefinition definition)
+        protected internal RangedWeapon(WeaponDefinition definition)
         {
             this.definition = definition;
             ammoInMagazine = definition.magazineSize;
@@ -36,7 +37,8 @@ namespace _Project.Scripts.Weapon
 
             if (isReloading)
             {
-                reloadTimer -= deltaTime;
+                float speedMultiplier = OwnerStats != null ? OwnerStats.ReloadSpeedMultiplier : 1f;
+                reloadTimer -= deltaTime * speedMultiplier;
                 if (reloadTimer <= 0f)
                     FinishReload();
             }
@@ -44,17 +46,20 @@ namespace _Project.Scripts.Weapon
 
         public override void Attack()
         {
-            if (!CanAttack)
+            if (isReloading)
+                return;
+
+            if (ammoInMagazine <= 0)
+            {
+                Reload();
+                return;
+            }
+
+            if (fireCooldown > 0f)
                 return;
 
             PerformShot();
-
-            ammoInMagazine--;
-            fireCooldown = 1f / definition.fireRate;
-
-            RaiseAttack();
-            OnShot?.Invoke();
-
+            
             if (ammoInMagazine <= 0)
                 Reload();
         }
@@ -65,8 +70,21 @@ namespace _Project.Scripts.Weapon
                 return;
 
             isReloading = true;
-            reloadTimer = definition.reloadTime;
+            float speedMultiplier = OwnerStats != null ? OwnerStats.ReloadSpeedMultiplier : 1f;
+            reloadTimer = definition.reloadTime / speedMultiplier;
             OnReloadStarted?.Invoke();
+            OnAmmoChanged?.Invoke(ammoInMagazine);
+        }
+        
+        public float ReloadProgress
+        {
+            get
+            {
+                if (!isReloading)
+                    return 1f;
+
+                return 1f - (reloadTimer / definition.reloadTime);
+            }
         }
 
         protected virtual void FinishReload()
@@ -74,11 +92,31 @@ namespace _Project.Scripts.Weapon
             ammoInMagazine = definition.magazineSize;
             isReloading = false;
             OnReloadFinished?.Invoke();
+            OnAmmoChanged?.Invoke(ammoInMagazine);
         }
 
         protected virtual void PerformShot()
         {
-            // TODO создание пули
+            ammoInMagazine--;
+            float rate = definition.fireRate;
+            if (OwnerStats != null)
+                rate *= OwnerStats.FireRateMultiplier;
+
+            fireCooldown = 1f / rate;
+            
+            RaiseAttack();
+            OnShot?.Invoke();
+            OnAmmoChanged?.Invoke(ammoInMagazine);
+        }
+        
+        public void CancelReload()
+        {
+            if (!isReloading)
+                return;
+
+            isReloading = false;
+            reloadTimer = 0f;
+            OnAmmoChanged?.Invoke(ammoInMagazine);
         }
     }
 }

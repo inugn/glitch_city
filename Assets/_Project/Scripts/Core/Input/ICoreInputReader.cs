@@ -1,7 +1,10 @@
-﻿namespace _Project.Scripts.Core.Input
+﻿using UnityEngine;
+
+namespace _Project.Scripts.Core.Input
 {
     public interface ICoreInputReader
     {
+        Vector2 MouseWorldPosition { get; }
         float MoveX { get; }
         bool AttackHeld { get; }
 

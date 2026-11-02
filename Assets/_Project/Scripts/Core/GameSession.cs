@@ -8,6 +8,7 @@
         public bool RunInProgress { get; private set; }
         public int ArenaIndex { get; private set; } = 1; // 1..N (какую арену играем следующей)
         public int WaveIndex { get; private set; } = 0;  // 0..N (0 = ещё не стартовали)
+        public int Credits { get; private set; } = 0;
 
         public GameSession(EventBus bus) => _bus = bus;
         
@@ -21,6 +22,8 @@
             RunInProgress = true;
             ArenaIndex = 1;
             WaveIndex = 0;
+            
+            Credits = 0;
 
             _bus.RaiseRunStarted();
             _bus.RaiseArenaIndexChanged(ArenaIndex);
@@ -32,6 +35,8 @@
             RunInProgress = false;
             ArenaIndex = 1;
             WaveIndex = 0;
+            
+            Credits = 0;
 
             _bus.RaiseRunEnded();
             _bus.RaiseArenaIndexChanged(ArenaIndex);
@@ -48,6 +53,14 @@
         {
             ArenaIndex = arena;
             _bus.RaiseArenaIndexChanged(ArenaIndex);
+        }
+        
+        public void AddCredits(int amount) 
+        {
+            if (amount <= 0) return;
+
+            Credits += amount;
+            _bus.RaiseCreditsChanged(Credits);
         }
     }
 }

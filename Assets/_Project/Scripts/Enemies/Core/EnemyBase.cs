@@ -66,11 +66,11 @@ namespace _Project.Scripts.Enemies.Core
                 FlashHit();
 
                 if (Stats.Health.IsDead)  // Проверка через экземпляр Health
-                    Die();
+                    OnDeath();
             }
         }
 
-        protected virtual void Die()
+        protected override void OnDeath()
         {
             if (IsDead) return;
             IsDead = true;
@@ -80,7 +80,7 @@ namespace _Project.Scripts.Enemies.Core
 
             Destroy(gameObject);
         }
-
+        
         private void FlashHit()
         {
             if (sprite == null) return;

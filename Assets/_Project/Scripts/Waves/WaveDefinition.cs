@@ -10,6 +10,9 @@ namespace _Project.Scripts.Waves
         [Header("Timing")]
         [Min(0f)] public float startDelay = 0f;
 
+        [Header("Rewards")]
+        [Min(0)] public int xpReward = 0;
+
         [Header("Spawns")]
         public SpawnEntry[] spawns = Array.Empty<SpawnEntry>();
 

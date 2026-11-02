@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using _Project.Scripts.Core.Run;
 using _Project.Scripts.Core.World;
 using _Project.Scripts.Waves;
+using _Project.UI;
 
 namespace _Project.Scripts.Core.Arena
 {
@@ -16,6 +17,8 @@ namespace _Project.Scripts.Core.Arena
         private GameSession session;
         private RunDefinition runDef;
         private ArenaDefinition arenaDef;
+        private MetaProgress meta;
+
 
         private bool isBossScene;
         private int pendingWaveIndex;
@@ -30,6 +33,13 @@ namespace _Project.Scripts.Core.Arena
 
             if (waveManager == null)
                 Debug.LogError("[ArenaFlow] WaveManager not found in scene.", this);
+            
+            if (cardChoice == null && _Project.UI.UIManager.Instance != null)
+                cardChoice = _Project.UI.UIManager.Instance.CardChoice;
+
+            if (cardChoice == null)
+                cardChoice = FindFirstObjectByType<CardChoiceStub>(FindObjectsInactive.Include);
+
         }
 
         private void OnEnable()
@@ -76,9 +86,18 @@ namespace _Project.Scripts.Core.Arena
                 return;
             }
 
+            meta = App.Instance.Services.Get<MetaProgress>();
+            if (meta == null)
+                Debug.LogWarning("[ArenaFlow] MetaProgress not found in services. XP rewards will be skipped.", this);
+            
+
             string sceneName = SceneManager.GetActiveScene().name;
             isBossScene = sceneName == SceneNames.BossArena;
 
+            if (!isBossScene && cardChoice == null)
+            {
+                cardChoice = UIManager.Instance != null ? UIManager.Instance.CardChoice : null;
+            }
             if (isBossScene)
             {
                 arenaDef = runDef.bossArena;
@@ -108,7 +127,11 @@ namespace _Project.Scripts.Core.Arena
 
             // Перед первой волной: 0 -> next = 1
             session.SetWave(0);
+            
+            if (cardChoice == null)
+                cardChoice = FindFirstObjectByType<CardChoiceStub>(FindObjectsInactive.Include);
 
+            
             StartNextWave();
         }
 
@@ -128,6 +151,8 @@ namespace _Project.Scripts.Core.Arena
                 cardChoice != null &&
                 ((nextWave == 1 && arenaDef.showCardChoiceBeforeFirstWave) ||
                  (nextWave > 1 && arenaDef.showCardChoiceBetweenWaves));
+
+            Debug.Log($"[ArenaFlow] useCardsNow={useCardsNow} nextWave={nextWave} cardChoice={(cardChoice!=null)} boss={isBossScene}", this);
 
             if (useCardsNow)
             {
@@ -156,6 +181,20 @@ namespace _Project.Scripts.Core.Arena
 
         private void OnWaveCleared()
         {
+            Debug.Log($"[ArenaFlow] WaveCleared! wave={session?.WaveIndex}");
+            
+            if (meta != null && waveManager != null)
+            {
+                int clearedWave = session != null ? session.WaveIndex : 0;
+
+                if (clearedWave > 0 && waveManager.TryGetWaveDefinition(clearedWave, out var def))
+                {
+                    int xp = Mathf.Max(0, def.xpReward);
+                    if (xp > 0)
+                        meta.AddXp(xp);
+                }
+                
+            }
             // Следующей волны нет -> открыть дверь
             if (!waveManager.HasWave(session.WaveIndex + 1))
             {

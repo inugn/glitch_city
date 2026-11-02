@@ -1,4 +1,5 @@
 ﻿using _Project.Scripts.Core;
+using _Project.Scripts.Weapon;
 using _Project.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,6 +13,9 @@ namespace _Project.Scripts.Player
 
         [Header("Behaviour")]
         [SerializeField] private bool keepPlayerBetweenScenes = true;
+        
+        [SerializeField] private WeaponDefinition testWeaponDefinition;
+
 
         private GameObject playerInstance;
 
@@ -56,6 +60,9 @@ namespace _Project.Scripts.Player
                 playerInstance = Instantiate(playerPrefab);
                 App.Instance.Services.Get<GameSession>().SetPlayer(playerInstance.GetComponent<Player>());
                 UIManager.Instance.RegisterPlayer(playerInstance.GetComponent<Player>());
+                // ВРЕМЕННО для отладки
+                //playerInstance.GetComponent<Player>().Combat.Equip(new RangedWeapon(testWeaponDefinition), testWeaponDefinition);
+                //
                 playerInstance.name = "Player";
 
                 // очень важно: чтобы DoorTrigger и WaveManager находили игрока
@@ -72,6 +79,26 @@ namespace _Project.Scripts.Player
             var rb = playerInstance.GetComponent<Rigidbody2D>();
             if (rb != null)
                 rb.linearVelocity = Vector2.zero;
+            
+            var player = playerInstance.GetComponent<_Project.Scripts.Player.Player>();
+            if (player == null)
+            {
+                Debug.LogError("[PlayerRuntimeSpawner] Spawned object has no Player component.", playerInstance);
+                return;
+            }
+
+            // 1) GameSession должен знать текущего игрока (если ты это используешь где-то)
+            var session = App.Instance?.Services?.Get<GameSession>();
+            session?.SetPlayer(player);
+
+            // 2) UI должен привязаться к игроку
+            if (UIManager.Instance != null)
+                UIManager.Instance.RegisterPlayer(player);
+            else
+                Debug.LogWarning("[PlayerRuntimeSpawner] UIManager.Instance is null (HUD not created yet?)");
+
+            Debug.Log($"[Spawn] Player={player.name}, UI={(UIManager.Instance!=null)}, PlayerStatsUI={(UIManager.Instance!=null)}");
+
         }
     }
 }

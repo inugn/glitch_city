@@ -91,5 +91,28 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7141839933285395720, guid: 519fdcae4d876ce46b6e5905e95aedee, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2146837546934937957}
   m_SourcePrefab: {fileID: 100100000, guid: 519fdcae4d876ce46b6e5905e95aedee, type: 3}
+--- !u!1 &8181201230211381215 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7141839933285395720, guid: 519fdcae4d876ce46b6e5905e95aedee, type: 3}
+  m_PrefabInstance: {fileID: 1339150980554431191}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2146837546934937957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8181201230211381215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b93b42965df4eeeb4471fd39702f2b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Core.Actor.DamageFlash2D
+  renderers: []
+  duration: 0.1
+  flashColor: {r: 1, g: 0.35, b: 0.35, a: 1}

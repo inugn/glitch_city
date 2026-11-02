@@ -17,7 +17,9 @@ namespace _Project.Scripts.Core.Input
 
         public float MoveX { get; private set; }
         public bool AttackHeld { get; private set; }
-
+        public Vector2 MouseWorldPosition =>
+            Camera.main != null ? Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue()) : Vector2.zero;
+        
         public event System.Action JumpPressed;
         public event System.Action DashPressed;
         public event System.Action ReloadPressed;
@@ -40,7 +42,7 @@ namespace _Project.Scripts.Core.Input
             if (dash != null) dash.action.performed += OnDash;
             if (reload != null) reload.action.performed += OnReload;
             if (switchWeapon != null) switchWeapon.action.performed += OnSwitchWeapon;
-            if (interact != null) interact.action.performed += OnInteract;
+            if (interact != null) interact.action.started += OnInteract;
             if (pause != null) pause.action.performed += OnPause;
 
             if (attack != null)
@@ -48,6 +50,11 @@ namespace _Project.Scripts.Core.Input
                 attack.action.performed += OnAttackPerformed;
                 attack.action.canceled  += OnAttackCanceled;
             }
+            
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log($"[CoreInputReader] Enabled. interactRef={(interact != null ? interact.action?.name : "NULL")}", this);
+#endif
+
         }
 
         private void OnDisable()
@@ -56,7 +63,7 @@ namespace _Project.Scripts.Core.Input
             if (dash != null) dash.action.performed -= OnDash;
             if (reload != null) reload.action.performed -= OnReload;
             if (switchWeapon != null) switchWeapon.action.performed -= OnSwitchWeapon;
-            if (interact != null) interact.action.performed -= OnInteract;
+            if (interact != null) interact.action.started -= OnInteract;
             if (pause != null) pause.action.performed -= OnPause;
 
             if (attack != null)
@@ -119,7 +126,15 @@ namespace _Project.Scripts.Core.Input
         private void OnDash(InputAction.CallbackContext _) => DashPressed?.Invoke();
         private void OnReload(InputAction.CallbackContext _) => ReloadPressed?.Invoke();
         private void OnSwitchWeapon(InputAction.CallbackContext _) => SwitchWeaponPressed?.Invoke();
-        private void OnInteract(InputAction.CallbackContext _) => InteractPressed?.Invoke();
+        private void OnInteract(InputAction.CallbackContext ctx)
+        {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log($"[CoreInputReader] Interact STARTED. phase={ctx.phase} action={ctx.action?.name}");
+#endif
+            InteractPressed?.Invoke();
+        }
+
+
         private void OnPause(InputAction.CallbackContext _) => PausePressed?.Invoke();
 
         private void OnAttackPerformed(InputAction.CallbackContext _) => AttackHeld = true;

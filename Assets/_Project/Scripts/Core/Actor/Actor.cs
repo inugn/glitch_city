@@ -5,7 +5,6 @@ namespace _Project.Scripts.Core.Actor
     public class Actor : MonoBehaviour
     {
         [SerializeField] protected Stats stats;
-
         public Stats Stats => stats;
 
         protected virtual void Awake()
@@ -18,6 +17,19 @@ namespace _Project.Scripts.Core.Actor
             }
 
             stats.Initialize();
+            stats.Health.OnDeath += OnDeath;
+        }
+
+        protected virtual void OnDestroy()
+        {
+            if (stats?.Health != null)
+                stats.Health.OnDeath -= OnDeath;
+        }
+
+        protected virtual void OnDeath()
+        {
+            // По умолчанию — ничего.
+            // Враг/игрок переопределят.
         }
     }
 }

@@ -1,17 +1,27 @@
-using _Project.Scripts.Player;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using _Project.Scripts.Player;
+using _Project.Scripts.Core.Arena;
 
 namespace _Project.UI
 {
-    public class UIManager : MonoBehaviour
+    public sealed class UIManager : MonoBehaviour
     {
         public static UIManager Instance { get; private set; }
 
-        [SerializeField] private PlayerStatsUI playerStatsUI;
+        [Header("HUD Prefab (Canvas root)")]
+        [SerializeField] private GameObject hudPrefab;
+
+        private GameObject hudInstance;
+        private DeathScreenView deathScreenView;
+        public PlayerStatsUI PlayerStatsUI { get; private set; }
+        public CardChoiceStub CardChoice { get; private set; }
+
+        private Player pendingPlayer;
 
         private void Awake()
         {
-            if (Instance != null)
+            if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
                 return;
@@ -19,11 +29,86 @@ namespace _Project.UI
 
             Instance = this;
             DontDestroyOnLoad(gameObject);
+
+            EnsureHud();
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        public void ShowDeathScreen()
+        {
+            if (deathScreenView != null)
+                deathScreenView.Show();
+        }
+        
+        private void OnDestroy()
+        {
+            if (Instance == this)
+            {
+                SceneManager.sceneLoaded -= OnSceneLoaded;
+                Instance = null;
+            }
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (hudInstance == null) EnsureHud();
+            else if (PlayerStatsUI == null || CardChoice == null) ResolveHudRefs();
+
+            TryBindPendingPlayer();
+        }
+
+        private void EnsureHud()
+        {
+            if (hudInstance != null) return;
+
+            if (hudPrefab == null)
+            {
+                Debug.LogError("[UIManager] hudPrefab is not assigned.", this);
+                return;
+            }
+
+            hudInstance = Instantiate(hudPrefab);
+            hudInstance.name = hudPrefab.name;
+            DontDestroyOnLoad(hudInstance);
+
+            if (!hudInstance.activeSelf)
+                hudInstance.SetActive(true);
+            
+            deathScreenView = hudInstance.GetComponentInChildren<DeathScreenView>(true);
+            ResolveHudRefs();
+            TryBindPendingPlayer();
+        }
+
+        private void ResolveHudRefs()
+        {
+            PlayerStatsUI = hudInstance != null
+                ? hudInstance.GetComponentInChildren<PlayerStatsUI>(true)
+                : null;
+
+            CardChoice = hudInstance != null
+                ? hudInstance.GetComponentInChildren<CardChoiceStub>(true)
+                : null;
+
+            if (PlayerStatsUI == null)
+                Debug.LogError("[UIManager] PlayerStatsUI not found inside HUD prefab.", this);
+
+            if (CardChoice == null)
+                Debug.LogWarning("[UIManager] CardChoiceStub not found inside HUD prefab.", this);
         }
 
         public void RegisterPlayer(Player player)
         {
-            playerStatsUI.Initialize(player);
+            pendingPlayer = player;
+            TryBindPendingPlayer();
+        }
+
+        private void TryBindPendingPlayer()
+        {
+            if (pendingPlayer == null) return;
+            if (PlayerStatsUI == null) return;
+
+            PlayerStatsUI.Initialize(pendingPlayer);
+            pendingPlayer = null;
         }
     }
 }

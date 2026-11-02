@@ -236,6 +236,7 @@ GameObject:
   - component: {fileID: 1877139132046816921}
   - component: {fileID: 4421815971163391208}
   - component: {fileID: 5919538787657060233}
+  - component: {fileID: 2133584004370767092}
   m_Layer: 7
   m_Name: BaseEnemy
   m_TagString: Untagged
@@ -337,6 +338,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13c4b8dcfa3b4825a29cdb1ad80c8cd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Enemies.Core.EnemyBase
+  stats:
+    health:
+      maxHealth: 100
+      regenPerSecond: 0
+    fireRateMultiplier: 1
+    reloadSpeedMultiplier: 1
+    damageMultiplier: 1
+    moveSpeedMultiplier: 1
   sprite: {fileID: 1891538167187669955}
 --- !u!114 &1438235974246667689
 MonoBehaviour:
@@ -421,9 +430,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43db2802ef51449d88ccb56858e1bc37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Enemies.Attacks.ExplodeAttack
-  playerMask:
-    serializedVersion: 2
-    m_Bits: 0
 --- !u!114 &4421815971163391208
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -450,3 +456,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Enemies.Attacks.RangedAttack
   projectilePrefab: {fileID: 6762824351698115854, guid: 95a0135742f83c4419ebf71de52f2603, type: 3}
   muzzle: {fileID: 6251862009585891774}
+--- !u!114 &2133584004370767092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7141839933285395720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b93b42965df4eeeb4471fd39702f2b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Core.Actor.DamageFlash2D
+  renderers: []
+  duration: 0.1
+  flashColor: {r: 1, g: 0.35, b: 0.35, a: 1}

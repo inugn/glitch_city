@@ -12,10 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dcdb961026d4b2094f861c64fdab392, type: 3}
   m_Name: Rifle
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Weapon.WeaponDefinition
-  weaponId: 1
-  damage: 8
-  fireRate: 0.18
+  weaponPrefab: {fileID: 2657243087759754713, guid: e8626601f87cf044c98c65fe85bf223a, type: 3}
+  icon: {fileID: 0}
+  weaponId: "\u0410\u0432\u0442\u043E\u043C\u0430\u0442"
+  damage: 7
+  fireRate: 8
   magazineSize: 30
-  reloadTime: 0
+  reloadTime: 2
   bulletsPerShot: 1
   spreadAngle: 5
+  projectileDefinition: {fileID: 11400000, guid: 8b68ecb4ff598134aa9d255d9e4e7fed, type: 2}
+  requiredLevel: 2

@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace _Project.Scripts.Core
 {
@@ -10,8 +11,10 @@ namespace _Project.Scripts.Core
         public event Action Paused;
         public event Action Resumed;
 
-        public event Action<int> ArenaIndexChanged; // 1..3
-        public event Action<int> WaveIndexChanged;  // 1..3
+        public event Action<int> ArenaIndexChanged;
+        public event Action<int> WaveIndexChanged;
+
+        public event Action<int> CreditsChanged; 
 
         public void RaiseRunStarted() => RunStarted?.Invoke();
         public void RaiseRunEnded() => RunEnded?.Invoke();
@@ -21,5 +24,12 @@ namespace _Project.Scripts.Core
 
         public void RaiseArenaIndexChanged(int value) => ArenaIndexChanged?.Invoke(value);
         public void RaiseWaveIndexChanged(int value) => WaveIndexChanged?.Invoke(value);
+
+        public void RaiseCreditsChanged(int value)
+        {
+            Debug.Log($"[EventBus] RaiseCreditsChanged({value}) busId={GetHashCode()}");
+            CreditsChanged?.Invoke(value);
+        }
+
     }
 }

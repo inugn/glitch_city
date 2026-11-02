@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Wave_A1_3
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Waves.WaveDefinition
   startDelay: 0
+  xpReward: 20
   spawns:
   - enemy: {fileID: 11400000, guid: 660073ab2a565714b96d9c322d2e9d0a, type: 2}
     count: 2

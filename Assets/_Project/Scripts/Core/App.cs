@@ -2,6 +2,7 @@
 using _Project.Scripts.Core.Card;
 using _Project.Scripts.Core.Input;
 using _Project.Scripts.Core.Run;
+using _Project.Scripts.Core.Save;
 using UnityEngine;
 
 namespace _Project.Scripts.Core
@@ -19,6 +20,8 @@ namespace _Project.Scripts.Core
         
         [Header("Run Config (ScriptableObject)")]
         [SerializeField] private RunDefinition runDefinition;
+        
+        private MetaProgressPersistence metaPersistence;
 
         private void Awake()
         {
@@ -58,7 +61,8 @@ namespace _Project.Scripts.Core
             var session = new GameSession(bus);
             Services.Register(session);
             
-            Services.Register(new MetaProgress());
+            var meta = new MetaProgress();
+            Services.Register(meta);
 
             Services.Register(sceneLoader);
 
@@ -68,12 +72,33 @@ namespace _Project.Scripts.Core
                 Debug.LogError("[App] CoreInputReader not found.", this);
             
             Services.Register(new EffectApplier(session));
-
-            // ✅ Регистрируем конфиг прогрессии
+            
             if (runDefinition != null)
                 Services.Register(runDefinition);
             else
                 Debug.LogError("[App] RunDefinition is not assigned in Inspector.", this);
+            
+            var storage = new JsonFileProgressStorage();
+            metaPersistence = new MetaProgressPersistence(meta, storage, bus);
+            Services.Register(metaPersistence);
+            
+            var deathScreenGO = new GameObject("DeathScreenController");
+            var deathScreenCtrl = deathScreenGO.AddComponent<DeathScreenController>();
+            Services.Register(deathScreenCtrl);
+
+            metaPersistence.Load();
+            
+        }
+        
+        private void OnApplicationQuit()
+        {
+            metaPersistence?.SaveIfDirty();
+        }
+
+        private void OnApplicationPause(bool pause)
+        {
+            if (pause)
+                metaPersistence?.SaveIfDirty();
         }
     }
 }
