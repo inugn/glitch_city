@@ -51,8 +51,9 @@ namespace _Project.Scripts.Enemies.Core
         public void FaceX(float dirX)
         {
             if (sprite == null) return;
-            if (dirX > 0.01f) sprite.flipX = false;
-            else if (dirX < -0.01f) sprite.flipX = true;
+
+            if (dirX > 0.01f) sprite.flipX = true;    
+            else if (dirX < -0.01f) sprite.flipX = false;
         }
 
         public void TakeDamage(int amount)

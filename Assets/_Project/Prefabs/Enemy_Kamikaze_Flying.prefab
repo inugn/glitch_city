@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1891538167187669955, guid: 519fdcae4d876ce46b6e5905e95aedee, type: 3}
+      propertyPath: m_FlipX
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2903518598992072543, guid: 519fdcae4d876ce46b6e5905e95aedee, type: 3}
       propertyPath: m_Size.x
       value: 0.5
@@ -15,6 +19,10 @@ PrefabInstance:
     - target: {fileID: 2903518598992072543, guid: 519fdcae4d876ce46b6e5905e95aedee, type: 3}
       propertyPath: m_Size.y
       value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2903518598992072543, guid: 519fdcae4d876ce46b6e5905e95aedee, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6157359854888068385, guid: 519fdcae4d876ce46b6e5905e95aedee, type: 3}
       propertyPath: m_GravityScale
